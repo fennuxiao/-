@@ -15,22 +15,19 @@
     <el-container>
       <!-- 侧边栏 -->
     <el-aside width="200px">
-      <el-menu 
-        background-color="#545c64"
-        text-color="#fff"
-        active-text-color="#409eff"
-      >
+      <el-menu background-color="#545c64"  text-color="#fff"  active-text-color="#409eff"
+      font-size:14px>
       <!-- 一级菜单 -->
-      <el-submenu index="1">
+      <el-submenu index="item.id+''" v-for="item in menuList" :key="item.id">
         <template slot="title">
           <i class="el-icon-location"></i>
-          <span>导航一</span>
+          <span>{{item.title}}</span>
         </template>
-
-          <el-menu-item index="1-1">
+      <!-- 二级菜单 -->
+          <el-menu-item index="it.id+''" v-for="it in item.sList" :key="it.id">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>导航一</span>
+              <span style="color:white">{{it.title}}</span>
             </template>
           </el-menu-item>
         </el-submenu>
@@ -39,6 +36,7 @@
     <!-- 主体 -->
     <el-main>
       main
+
     </el-main>
     </el-container>
   </el-container>
@@ -46,10 +44,27 @@
 </template>
 <script>
 export default {
+  data() {
+    return {
+      //菜单列表
+      menuList:[],
+    }
+  },
+  created() {
+    //onload事件,页面一加载就实现
+    this.getMenuList();
+  },
   methods: {
     logout() {
       window.sessionStorage.clear();//清除session
       this.$router.push("/login");//回到登录页面
+    },
+    //获取导航菜单方法
+    async getMenuList() {
+      const {data:res}=await this.$http.get("menus");
+      console.log(res);
+      if(res.flag!=200) return this.$message.error("获取菜单列表失败");//访问失败
+      this.menuList=res.menus;//访问成功数据回填
     }
   }
 
@@ -80,13 +95,15 @@ export default {
 //侧边栏样式
 .el-aside {
   background-color: #4fb96d;
+
 }
+
 //主体样式
 .el-main {
-  background-color: #a754a0;
+  background-color: #d896d2;
 }
 img {
   width: 55px;
   height: 55px;
 }
-</style>
+</style>​
